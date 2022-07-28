@@ -1,4 +1,6 @@
-import React from "react"
+import React, { useState } from "react"
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../../firebase";
 import logo from "../../components/assets/images/logo.svg"
 import { Link } from "react-router-dom"
 
@@ -9,6 +11,24 @@ const Search = ({ CartItem }) => {
     search.classList.toggle("active", window.scrollY > 100)
   })
 
+  // stores state for users search input
+  const [ searchInputCurr, setSearchInputCurr ] = useState(""); 
+
+  // handles changes in search input
+  const handleSearchInput = (event) => {
+    event.preventDefault();
+    const userRef = collection(db, 'userInputs');
+    addDoc(userRef, { searchInputCurr })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      })
+  };
+  
+  console.log(searchInputCurr);
+
   return (
     <>
       <section className='search'>
@@ -18,9 +38,15 @@ const Search = ({ CartItem }) => {
           </div>
 
           <div className='search-box f_flex'>
-            <i className='fa fa-search'></i>
-            <input type='text' placeholder='Search and hit enter...' />
-            <span>All Category</span>
+              <i className='fa fa-search'></i>
+              <form onSubmit={ handleSearchInput }>
+                <input 
+                  type='type' 
+                  placeholder='Search and hit enter...'
+                  onChange={(event) => setSearchInputCurr(event.target.value)}
+                />
+              </form>
+              <span>All Category</span>
           </div>
 
           <div className='icon f_flex width'>
